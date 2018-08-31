@@ -1,9 +1,9 @@
 #These are the libaries that we are going to be using
-from picamera import PiCamera #this is to allow us to access the camera
+from picamera import PiCamera  #this is to allow us to access the camera
 import sys #This allows us to save
 import os #allows the us to access the time strucutre
 import time #This allows us the time we going to be using
-
+import RPi.GPIO as GPIO
 
 #This configures the GPIO Ports that we use on the raspberry pi
 GPIO.setmode(GPIO.BCM)
@@ -27,7 +27,7 @@ GPIO.setup(TAKING_IMAGE_LED,GPIO.OUT) #This is switch that tells us that we are 
 timeBetweenShotsInSeconds = 30 #this is to be in seconds - this is how long we need to wait before taking the shot 
 
 #WE are going to save the images into this directory
-dirname = "/home/pi/Desk"
+dirname = "images"
 #here we check to see if the directory exists
 if not os.path.exists(dirname):
     os.makedirs(dirname)
@@ -111,7 +111,8 @@ except KeyboardInterrupt:
     GPIO.cleanup()
 
 #here we have some code that tidies up our program if something else causes us to crash
-except:
+except Exception, err:
+    print Exception, err
     #here we give the user some help
     print("Unknown ERROR - check for SEGFault - if you do have one we ran out of ram")
     print("Otherwise is the memory card full?")
