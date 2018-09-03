@@ -24,7 +24,7 @@ GPIO.setup(IS_RUNNING,GPIO.OUT) #This is the lught to show that we are running
 GPIO.setup(NOT_PAUSED,GPIO.OUT) #This is the switch to show that Recording
 GPIO.setup(TAKING_IMAGE_LED,GPIO.OUT) #This is switch that tells us that we are about to take a picture
 
-timeBetweenShotsInSeconds = 30 #this is to be in seconds - this is how long we need to wait before taking the shot 
+timeBetweenShotsInSeconds = 5 #this is to be in seconds - this is how long we need to wait before taking the shot 
 
 #WE are going to save the images into this directory
 dirname = "images"
@@ -43,22 +43,43 @@ print "Program is started and working - press ctrl-c to end (kepboard interupt"
 
 #Initialises the camera
 camera = PiCamera()
+camera.resolution = (1920, 1080)
+print "Capturing at 1920 by 1080"
+
 
 #using a try loop until we hit a problem or told to close
 try: 
+    files = os.listdir(dirname)
+    highestnumber = 0
+
+    #here we keep looking for the file with the highest number
+    while True:
+        try: 
+            #lets see if the file exists
+            if os.path.exists("/home/pi/piCam/images/"+ str(highestnumber) + ".jpg" ):
+                print "file does exist - lets not overwrite"
+                highestnumber = highestnumber + 1
+            else:
+                print "file does not exist - here we go"
+                break #stop looping we found the file we want
+        except:
+            print "file does not exist - here we go"
+            break
+      
+
+    photoNumber = highestnumber
     #here we are using an infinate loop to keep our program running forever 
     while True: 
         #turns on the not-paused LED
         GPIO.output(NOT_PAUSED,True)
         #States that we are working
-        
-        #format of the image output - we want to save in H:M:S and then D.M.Y
-        timestr = time.strftime("%H:%M:%S %d.%m.%Y")
-
+    
         #caputre image... thats it to actaully capture an image and to save it
-        camera.capture("images/" + timestr + ".jpg") 
+        camera.capture("/home/pi/piCam/images/"  + str(photoNumber) + ".jpg") 
         #Prints to the command line prompt that we caputred the image
         print "Imaged captured"
+
+        photoNumber = photoNumber + 1
     
     #this loop is designed to allow for a pause button to work 
 
@@ -101,10 +122,7 @@ try:
                 GPIO.output(TAKING_IMAGE_LED,True)
             else :
                 GPIO.output(TAKING_IMAGE_LED,False)
-
-            time.sleep(0.1)
-
-#Turns off LEDs and releases swich
+                time.sleep(0.1)
 except KeyboardInterrupt:
     print("KeyboardInterrupt - turnining off lights ")
     #here we turn off the lights and release the lights
