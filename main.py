@@ -1,3 +1,5 @@
+#!/usr/bin/python
+#The line above needs to be there and teslls the computer that its a python script
 #These are the libaries that we are going to be using
 from picamera import PiCamera  #this is to allow us to access the camera
 import sys #This allows us to save
@@ -24,7 +26,7 @@ GPIO.setup(IS_RUNNING,GPIO.OUT) #This is the lught to show that we are running
 GPIO.setup(NOT_PAUSED,GPIO.OUT) #This is the switch to show that Recording
 GPIO.setup(TAKING_IMAGE_LED,GPIO.OUT) #This is switch that tells us that we are about to take a picture
 
-timeBetweenShotsInSeconds = 5 #this is to be in seconds - this is how long we need to wait before taking the shot 
+timeBetweenShotsInSeconds = 10 #this is to be in seconds - this is how long we need to wait before taking the shot 
 
 #WE are going to save the images into this directory
 dirname = "images"
@@ -82,7 +84,7 @@ try:
         photoNumber = photoNumber + 1
     
     #this loop is designed to allow for a pause button to work 
-
+    #Currently we have stopped using a button *BUT* it might come useful later on 
         #wait loop - we check every .1 of a second whether an image was taken or not.
         #We sample the switch every .1 of a second - this is the minum we can do with 
         #raspberry pi due to OS interupts
@@ -113,7 +115,7 @@ try:
             GPIO.output(NOT_PAUSED,True)
 
             #Here we opperate the waiting time
-            warningTime = 3 #This is the amount of warning we want in seconds 
+            warningTime = 8 #This is the amount of warning we want in seconds 
 
             #here we calculate it in miliseconds and finds the differnece between the two readings
             takingPhoto = (timeBetweenShotsInSeconds*10)-(warningTime*10)
